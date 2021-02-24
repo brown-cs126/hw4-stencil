@@ -97,7 +97,7 @@ let string_of_directive ~macos = function
   | DqLabel l ->
       Printf.sprintf "\tdq %s" (label_name macos l)
   | DqString l ->
-      Printf.sprintf "\tdq \"%s\"" l
+      Printf.sprintf "\tdq \"%s\", 0" l
   (* instructions *)
   | Mov (dest, src) ->
       (* if is_label src && macos then

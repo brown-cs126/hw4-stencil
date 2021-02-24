@@ -165,6 +165,8 @@ let rec compile_expr (tab : symtab) (stack_index : int) :
       compile_expr tab stack_index exp
       @ [Mov (stack_address stack_index, Reg Rax)]
       @ compile_expr (Symtab.add var stack_index tab) (stack_index - 8) body
+  | Lst (Sym "do" :: exps) when List.length exps > 0 ->
+      List.concat_map (compile_expr tab stack_index) exps
   | Lst [Sym f; arg] as exp ->
       compile_expr tab stack_index arg @ compile_unary_primitive exp f
   | Lst [Sym f; arg1; arg2] as exp ->
