@@ -99,6 +99,7 @@ The grammar your new interpreter and compiler should support is as follows:
          | <id>
          | true
          | false
+         | ()
          | (<un_prim> <expr>)
          | (<bin_prim> <expr> <expr>)
          | (<tri_prim> <expr> <expr> <expr>)
