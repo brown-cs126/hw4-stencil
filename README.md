@@ -105,6 +105,7 @@ The grammar your new interpreter and compiler should support is as follows:
          | (<tri_prim> <expr> <expr> <expr>)
          | (if <expr> <expr> <expr>)
          | (let ((<id> <expr>)) <expr>)
+         | (do <expr> <expr> ...)
              
 
 <un_prim> ::= add1
