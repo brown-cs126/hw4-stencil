@@ -15,7 +15,11 @@ let command =
           let filename = Filename.basename filename in
           if run then
             Assemble.eval directory Runtime.runtime filename [] instrs
-            |> printf "%s\n"
+            |> function
+            | Ok output ->
+                printf "%s\n" output
+            | Error (Expected error | Unexpected error) ->
+                eprintf "%s\n" error
           else
             Assemble.build directory Runtime.runtime filename instrs |> ignore
         with Error.Stuck _ as e ->

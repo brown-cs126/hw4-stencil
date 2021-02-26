@@ -1,10 +1,18 @@
 open String
 open Unix
+open Printf
+
+type error = Expected of string | Unexpected of string
 
 let run cmd args =
   let open Shexp_process in
   let open Shexp_process.Infix in
   eval (run cmd args |- read_all)
+
+let run_exit_code cmd args =
+  let open Shexp_process in
+  let open Shexp_process.Infix in
+  eval (run_exit_code cmd args |+ read_all)
 
 let asm_name directory name = Printf.sprintf "%s/%s.s" directory name
 
@@ -23,7 +31,7 @@ let asm_to_file instrs asm_file =
   let file =
     Unix.openfile asm_file [Unix.O_WRONLY; Unix.O_CREAT; Unix.O_TRUNC] 0o666
   in
-  Unix.single_write_substring file text 0 (String.length text)
+  Unix.write_substring file text 0 (String.length text)
   |> fun _ -> Unix.close file
 
 let assemble asm_file object_file =
@@ -34,7 +42,7 @@ let copy_runtime runtime_file runtime_text =
   let file =
     Unix.openfile runtime_file [Unix.O_WRONLY; Unix.O_CREAT; Unix.O_TRUNC] 0o666
   in
-  Unix.single_write_substring file runtime_text 0 (String.length runtime_text)
+  Unix.write_substring file runtime_text 0 (String.length runtime_text)
   |> fun _ -> Unix.close file
 
 let link object_file runtime_file binary_file =
@@ -59,4 +67,14 @@ let build directory runtime name instrs =
   binary_file
 
 let eval directory runtime name args instrs =
-  run (build directory runtime name instrs) args
+  let exit =
+    try Ok (run_exit_code (build directory runtime name instrs) args)
+    with e -> Error (Unexpected (Printexc.to_string e))
+  in
+  Result.bind exit (function
+    | 0, output ->
+        Ok output
+    | 1, output ->
+        Error (Expected output)
+    | code, output ->
+        Error (Unexpected (sprintf "Exited with code %d: %s" code output)))
