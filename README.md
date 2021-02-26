@@ -44,8 +44,9 @@ called vectors. You'll implement the following vector operations:
 - `(vector-length v)` returns the length of the vector `v`.
 - `(vector-get v n)` returns the element of the vector `v` at (0-based) index
   `n`. `n` must evaluate to a non-negative integer less than the length of `v`.
-- `(vector-set v n e)` sets the element at index `n` of the vector `v` to `e`.
-`n` must evaluate to a non-negative integer less than the length of `v`.
+- `(vector-set v n e)` sets the element at index `n` of the vector `v` to `e`
+  and evaluates to the vector. `n` must evaluate to a non-negative integer less
+  than the length of `v`.
 
 Vectors should be represented as space-delimited lists of their values enclosed
 in square brackets. For instance, the following represent some simple vectors of
